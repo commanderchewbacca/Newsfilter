@@ -1,6 +1,9 @@
 """
 FLAME - Fuzzy clustering by Local Approximation of MEmbership
+
 """
+__author__      = "Matthew Billson"
+
 from __future__ import print_function
 
 import numpy as np
@@ -12,6 +15,13 @@ from sklearn.metrics.pairwise import pairwise_distances
 from sklearn.preprocessing import normalize
 from math import sqrt
 
+
+'''
+IMPORTANT!!!
+I DID NOT DO THIS!! CREDIT GOES TO Matthew Billson github link: https://github.com/yclicc/FLAME-python
+
+
+'''
 class FLAME(BaseEstimator, ClusterMixin):
 	def __init__(self, metric="euclidean", cluster_neighbors=5, iteration_neighbors=5, max_iter=np.inf, eps=1e-10, thd=-2, verbose=0):
 		self.metric = metric
