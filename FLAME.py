@@ -51,8 +51,10 @@ class FLAME(BaseEstimator, ClusterMixin):
 		for i in range(n_samples):
 			ties_for_largest_distance = np.where(distances[i] == largest_distance[i])
 			nearest.append(set(nearest_np[i, :].tolist()))
-			if len(nearest) >= 1:
-				nearest[-1].remove(i)
+			print(nearest)
+			print(i)
+			print(nearest_np[i])
+			nearest[-1].remove(i)
 			ties_for_largest_distance = set(ties_for_largest_distance[0].tolist())
 			ties_for_largest_distance.discard(i)
 			nearest_with_ties.append(nearest[i] | ties_for_largest_distance)
@@ -179,6 +181,7 @@ if __name__== "__main__":
 		[[0, 0, 0], [1.1, 0, 0], [0, 0.8, 0], [0, 0, 1.3], [10, 10, 10], [11.1, 10, 10], [10, 10.8, 10], [10, 11, 12]])
 	print(X)
 	model = FLAME(cluster_neighbors=3, iteration_neighbors=3,verbose=1)
-	membership = model.fit(X)
-	print(membership)
+	membership = model.fit_predict(X)
+	print(membership
+		  )
 	
