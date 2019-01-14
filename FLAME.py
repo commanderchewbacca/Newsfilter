@@ -2,7 +2,6 @@
 FLAME - Fuzzy clustering by Local Approximation of MEmbership
 
 """
-__author__      = "Matthew Billson"
 
 from __future__ import print_function
 
@@ -14,6 +13,7 @@ from sklearn.utils import check_array
 from sklearn.metrics.pairwise import pairwise_distances
 from sklearn.preprocessing import normalize
 from math import sqrt
+# __author__      = "Matthew Billson"
 
 
 '''
@@ -51,7 +51,8 @@ class FLAME(BaseEstimator, ClusterMixin):
 		for i in range(n_samples):
 			ties_for_largest_distance = np.where(distances[i] == largest_distance[i])
 			nearest.append(set(nearest_np[i, :].tolist()))
-			nearest[-1].remove(i)
+			if len(nearest) >= 1:
+				nearest[-1].remove(i)
 			ties_for_largest_distance = set(ties_for_largest_distance[0].tolist())
 			ties_for_largest_distance.discard(i)
 			nearest_with_ties.append(nearest[i] | ties_for_largest_distance)
@@ -176,6 +177,8 @@ class FLAME(BaseEstimator, ClusterMixin):
 if __name__== "__main__":
 	X = np.array(
 		[[0, 0, 0], [1.1, 0, 0], [0, 0.8, 0], [0, 0, 1.3], [10, 10, 10], [11.1, 10, 10], [10, 10.8, 10], [10, 11, 12]])
-	model = FLAME(cluster_neighbors=3, iteration_neighbors=3)
-	membership = model.fit_predict(X)
+	print(X)
+	model = FLAME(cluster_neighbors=3, iteration_neighbors=3,verbose=1)
+	membership = model.fit(X)
 	print(membership)
+	

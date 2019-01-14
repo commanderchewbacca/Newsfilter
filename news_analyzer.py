@@ -2,8 +2,11 @@ import json
 import requests
 import sys
 # the mock-0.3.1 dir contains testcase.py, testutils.py & mock.py
-sys.path.append('Stanford-NER-Python/main.py')
-import main
+import spacy
+
+from FLAME import FLAME
+import numpy as np
+
 from newsapi import NewsApiClient
 
 newsapi = NewsApiClient(api_key='b5881e7fff63474b8680919402a7e437')
@@ -15,6 +18,7 @@ newsapi = NewsApiClient(api_key='b5881e7fff63474b8680919402a7e437')
     3)upload articles to server
 '''
 
+nlp = spacy.load('en_core_web_sm')
 
 def get_headlines():
     top_headlines = newsapi.get_top_headlines(sources='fox-news, cnn')
@@ -23,26 +27,30 @@ def get_headlines():
 
 
         print(articles)
-def common_analyze(stringa, stringb):
 
 
-    # # count will contain all the word counts
-    # count = {}
-    #
-    # # insert words of string A to hash
-    # for word in stringa.split():
-    #     count[word] = count.get(word, 0) + 1
-    #
-    # # insert words of string B to hash
-    # for word in stringb.split():
-    #     count[word] = count.get(word, 0) + 1
-    #
-    # # return required list of words
-    # total_count = 0
-    # for word in count:
-    #     count[word] > 1
-    #     total_count += 1
-    # return total_count
+    matrix = [[0]*len(articles)]*len(articles)
+    print(matrix)
+    analayze_headlines(matrix, articles)
+def analayze_headlines(matrix,articles):
+    if matrix and matrix[0]:
+        for y in range(len(matrix)):
+            for x in range(len(matrix[y])):
+                y_title = articles[y].get('title')
+                x_title = articles[x].get('title')
+                if y_title and x_title:
+                    print(y_title,x_title)
+                    similarity = nlp(y_title).similarity(nlp(x_title))
+                    matrix[y][x] = similarity
+                    print(similarity)
+
+
+    model = FLAME( cluster_neighbors= max(1,len(articles)//5) , iteration_neighbors=max(1,len(articles)//5))
+    membership = model.fit_predict(np.array(matrix))
+    print(matrix)
+    print(membership)
+
+
 
 
 

@@ -8,3 +8,6 @@ gunicorn==19.9.0
 newsapi-python
 Cython
 git+git://github.com/networkx/networkx-metis.git
+scipy
+scikit-learn
+spacy
