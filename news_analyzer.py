@@ -4,7 +4,7 @@ import sys
 # the mock-0.3.1 dir contains testcase.py, testutils.py & mock.py
 import spacy
 
-from FLAME import FLAME
+# from FLAME import FLAME
 import numpy as np
 from sklearn import cluster
 
@@ -66,9 +66,39 @@ def analayze_headlines_DBSCAN(matrix, articles):
     print(matrix)
     print(membership)
     print([(articles[i].get('title'), membership[i]) for i in range(len(articles))])
+def analyze_headlines_setcover(articles):
 
 
 
+
+#stolen from http://www.martinbroadhurst.com/greedy-set-cover-in-python.html
+def set_cover(universe, subsets):
+    """Find a family of subsets that covers the universal set"""
+    elements = set(e for s in subsets for e in s)
+    # Check the subsets cover the universe
+    if elements != universe:
+        return None
+    covered = set()
+    cover = []
+    # Greedily add the subsets with the most uncovered points
+    while covered != elements:
+        subset = max(subsets, key=lambda s: len(s - covered))
+        cover.append(subset)
+        covered |= subset
+
+    return cover
+#stolen from http://www.martinbroadhurst.com/greedy-set-cover-in-python.html
+
+
+def main():
+    universe = set(range(1, 11))
+    subsets = [set([1, 2, 3, 8, 9, 10]),
+               set([1, 2, 3, 4, 5]),
+               set([4, 5, 7]),
+               set([5, 6, 7]),
+               set([6, 7, 8, 9, 10])]
+    cover = set_cover(universe, subsets)
+    print(cover)
 
 
 get_headlines()
