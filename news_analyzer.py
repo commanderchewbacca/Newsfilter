@@ -27,13 +27,19 @@ def get_headlines():
     top_headlines = newsapi.get_top_headlines(sources='fox-news, cnn')
     if top_headlines.get('status'):
         articles = top_headlines['articles']
+    top_headlines = newsapi.get_top_headlines(sources='abc-news')
+    if top_headlines.get('status'):
+        articles.extend(top_headlines['articles'])
+    top_headlines = newsapi.get_top_headlines(sources='bloomberg')
+    if top_headlines.get('status'):
+        articles.extend(top_headlines['articles'])
 
-        print(articles)
+        # print(articles)
 
-    matrix = [[0] * len(articles)] * len(articles)
-    print(matrix)
-    analayze_headlines_DBSCAN(matrix, articles)
-
+    # matrix = [[0] * len(articles)] * len(articles)
+    # print(matrix)
+    # analayze_headlines_DBSCAN(matrix, articles)
+    analyze_headlines_setcover(articles)
 
 def analayze_headlines_DBSCAN(matrix, articles):
     if matrix and matrix[0]:
@@ -66,7 +72,57 @@ def analayze_headlines_DBSCAN(matrix, articles):
     print(matrix)
     print(membership)
     print([(articles[i].get('title'), membership[i]) for i in range(len(articles))])
+
+
+
+
+
 def analyze_headlines_setcover(articles):
+    print(set(["a","b"]))
+    universe = set()
+    subsets = []
+    groups = []
+    categories = []
+    for article in articles:
+        entities  =  set()
+        for i in nlp(article.get('title')).ents:
+            entities.add(i.text)
+        print(entities)
+        subsets.append(entities)
+        universe = universe | entities
+        groups.append([entities,article])
+
+    cover = set_cover(universe,subsets)
+    for cov in cover:
+        print("cov",cov)
+        categories.append([cov,[]])
+
+    general =set()
+    general.add("general")
+    categories.append([general,[]])
+    print("cata",categories)
+
+    for group in groups:
+        max = 0
+        maxcount = len(categories)-1
+        for count ,catagory in enumerate(categories):
+            common = len(catagory[0].intersection(group[0]))
+
+            if common > max:
+                max =common
+                maxcount = count
+
+        print(maxcount)
+        categories[maxcount][1].append(group[1].get('title'))
+
+
+    for i in categories:
+        print(i[0],len(i[1]))
+        print(i)
+
+
+
+
 
 
 
@@ -81,7 +137,7 @@ def set_cover(universe, subsets):
     covered = set()
     cover = []
     # Greedily add the subsets with the most uncovered points
-    while covered != elements:
+    while covered != universe:
         subset = max(subsets, key=lambda s: len(s - covered))
         cover.append(subset)
         covered |= subset
@@ -89,16 +145,16 @@ def set_cover(universe, subsets):
     return cover
 #stolen from http://www.martinbroadhurst.com/greedy-set-cover-in-python.html
 
-
-def main():
-    universe = set(range(1, 11))
-    subsets = [set([1, 2, 3, 8, 9, 10]),
-               set([1, 2, 3, 4, 5]),
-               set([4, 5, 7]),
-               set([5, 6, 7]),
-               set([6, 7, 8, 9, 10])]
-    cover = set_cover(universe, subsets)
-    print(cover)
+#
+# def main():
+#     universe = set(range(1, 11))
+#     subsets = [set([1, 2, 3, 8, 9, 10]),
+#                set([1, 2, 3, 4, 5]),
+#                set([4, 5, 7]),
+#                set([5, 6, 7]),
+#                set([6, 7, 8, 9, 10])]
+#     cover = set_cover(universe, subsets)
+#     print(cover)
 
 
 get_headlines()
